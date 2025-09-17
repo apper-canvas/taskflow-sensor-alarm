@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import { useSelector } from "react-redux";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
-import { AuthContext } from "../App";
+import { AuthContext } from "@/App";
 
 const Header = () => {
   const { logout } = useContext(AuthContext);
