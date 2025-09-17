@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useContext } from "react";
+import { useSelector } from "react-redux";
 import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import { AuthContext } from "../App";
 
 const Header = () => {
+  const { logout } = useContext(AuthContext);
+  const userState = useSelector((state) => state.user);
+  const user = userState?.user;
+  const isAuthenticated = userState?.isAuthenticated;
   return (
     <header className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -18,7 +25,7 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="flex items-center space-x-4">
+<div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center space-x-6 text-sm text-gray-600">
               <div className="flex items-center">
                 <ApperIcon name="Zap" size={16} className="mr-2 text-indigo-500" />
@@ -33,6 +40,24 @@ const Header = () => {
                 <span>Never miss deadlines</span>
               </div>
             </div>
+            
+            {isAuthenticated && (
+              <div className="flex items-center space-x-4">
+                <div className="hidden sm:flex items-center text-sm text-gray-600">
+                  <ApperIcon name="User" size={16} className="mr-2 text-indigo-500" />
+                  <span>Welcome, {user?.firstName || user?.emailAddress || 'User'}</span>
+                </div>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={logout}
+                  icon="LogOut"
+                  iconPosition="left"
+                >
+                  Logout
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </div>

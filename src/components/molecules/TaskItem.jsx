@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { format, isAfter } from "date-fns";
 import { toast } from "react-toastify";
 import { taskService } from "@/services/api/taskService";
-import Badge from "@/components/atoms/Badge";
-import Button from "@/components/atoms/Button";
-import Checkbox from "@/components/atoms/Checkbox";
-import ApperIcon from "@/components/ApperIcon";
 import { motion } from "framer-motion";
+import ApperIcon from "@/components/ApperIcon";
+import Button from "@/components/atoms/Button";
+import Badge from "@/components/atoms/Badge";
+import Checkbox from "@/components/atoms/Checkbox";
 
 const TaskItem = ({ task, onTaskUpdate, onTaskDelete, onTaskEdit }) => {
   const [updating, setUpdating] = useState(false);
@@ -15,11 +15,11 @@ const TaskItem = ({ task, onTaskUpdate, onTaskDelete, onTaskEdit }) => {
   const handleToggleComplete = async () => {
     setUpdating(true);
     try {
-      const updatedTask = await taskService.update(task.Id, {
-        completed: !task.completed
+const updatedTask = await taskService.update(task.Id, {
+        completed_c: !task.completed_c
       });
       onTaskUpdate(updatedTask);
-      toast.success(task.completed ? "Task marked as pending" : "Task completed! 🎉");
+      toast.success(task.completed_c ? "Task marked as pending" : "Task completed! 🎉");
     } catch (error) {
       console.error("Failed to update task:", error);
       toast.error("Failed to update task");
@@ -69,7 +69,7 @@ const TaskItem = ({ task, onTaskUpdate, onTaskDelete, onTaskEdit }) => {
     return colors[category] || "#6B7280";
   };
 
-  const isOverdue = task.dueDate && !task.completed && isAfter(new Date(), new Date(task.dueDate));
+const isOverdue = task.due_date_c && !task.completed_c && isAfter(new Date(), new Date(task.due_date_c));
 
   return (
     <motion.div
@@ -77,34 +77,34 @@ const TaskItem = ({ task, onTaskUpdate, onTaskDelete, onTaskEdit }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className={`bg-white rounded-xl p-6 shadow-lg border transition-all duration-200 hover:shadow-xl ${
-        task.completed ? "border-green-200 bg-green-50" : "border-gray-100 hover:border-indigo-200"
+className={`bg-white rounded-xl p-6 shadow-lg border transition-all duration-200 hover:shadow-xl ${
+        task.completed_c ? "border-green-200 bg-green-50" : "border-gray-100 hover:border-indigo-200"
       } ${isOverdue ? "border-l-4 border-l-red-500" : ""}`}
     >
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center space-x-3 flex-1">
           <Checkbox
-            checked={task.completed}
+            checked={task.completed_c}
             onChange={handleToggleComplete}
             disabled={updating}
           />
           
           <div className="flex-1">
             <h3 className={`text-lg font-semibold ${
-              task.completed 
+              task.completed_c 
                 ? "text-green-700 line-through" 
                 : "text-gray-900"
             }`}>
-              {task.title}
+              {task.title_c}
             </h3>
             
-            {task.description && (
+{task.description_c && (
               <p className={`text-sm mt-1 ${
-                task.completed 
+                task.completed_c 
                   ? "text-green-600 line-through" 
                   : "text-gray-600"
               }`}>
-                {task.description}
+                {task.description_c}
               </p>
             )}
           </div>
@@ -139,19 +139,18 @@ const TaskItem = ({ task, onTaskUpdate, onTaskDelete, onTaskEdit }) => {
           <Badge 
             variant="custom" 
             size="xs"
-            style={getPriorityColor(task.priority)}
+style={getPriorityColor(task.priority_c)}
           >
-            {task.priority}
+            {task.priority_c}
           </Badge>
           
           <Badge 
             variant="custom" 
             size="xs"
-            style={{ backgroundColor: getCategoryColor(task.category), color: "white" }}
+            style={{ backgroundColor: getCategoryColor(task.category_c?.Name || task.category_c), color: "white" }}
           >
-            {task.category}
+            {task.category_c?.Name || task.category_c}
           </Badge>
-
           {isOverdue && (
             <Badge variant="danger" size="xs">
               Overdue
@@ -159,21 +158,21 @@ const TaskItem = ({ task, onTaskUpdate, onTaskDelete, onTaskEdit }) => {
           )}
         </div>
 
-        {task.dueDate && (
+{task.due_date_c && (
           <div className={`text-sm flex items-center ${
             isOverdue ? "text-red-600 font-semibold" : "text-gray-500"
           }`}>
-            <ApperIcon name="Calendar" size={14} className="mr-1" />
-            {format(new Date(task.dueDate), "MMM d, yyyy")}
+<ApperIcon name="Calendar" size={14} className="mr-1" />
+            {format(new Date(task.due_date_c), "MMM d, yyyy")}
           </div>
         )}
       </div>
 
-      {task.completed && task.completedAt && (
+      {task.completed_c && task.completed_at_c && (
         <div className="mt-3 pt-3 border-t border-green-200">
           <div className="text-sm text-green-600 flex items-center">
             <ApperIcon name="CheckCircle" size={14} className="mr-1" />
-            Completed on {format(new Date(task.completedAt), "MMM d, yyyy 'at' h:mm a")}
+            Completed on {format(new Date(task.completed_at_c), "MMM d, yyyy 'at' h:mm a")}
           </div>
         </div>
       )}

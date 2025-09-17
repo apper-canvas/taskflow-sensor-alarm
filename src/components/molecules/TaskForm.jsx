@@ -9,12 +9,12 @@ import Textarea from "@/components/atoms/Textarea";
 import ApperIcon from "@/components/ApperIcon";
 
 const TaskForm = ({ onTaskCreated, editingTask, onEditComplete }) => {
-  const [formData, setFormData] = useState({
-    title: "",
-    description: "",
-    priority: "",
-    category: "",
-    dueDate: ""
+const [formData, setFormData] = useState({
+    title_c: "",
+    description_c: "",
+    priority_c: "",
+    category_c: "",
+    due_date_c: ""
   });
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -25,14 +25,14 @@ const TaskForm = ({ onTaskCreated, editingTask, onEditComplete }) => {
   }, []);
 
   useEffect(() => {
-    if (editingTask) {
+if (editingTask) {
       setIsEditing(true);
       setFormData({
-        title: editingTask.title || "",
-        description: editingTask.description || "",
-        priority: editingTask.priority || "",
-        category: editingTask.category || "",
-        dueDate: editingTask.dueDate ? new Date(editingTask.dueDate).toISOString().split("T")[0] : ""
+        title_c: editingTask.title_c || "",
+        description_c: editingTask.description_c || "",
+        priority_c: editingTask.priority_c || "",
+        category_c: editingTask.category_c?.Id || editingTask.category_c || "",
+        due_date_c: editingTask.due_date_c ? new Date(editingTask.due_date_c).toISOString().split("T")[0] : ""
       });
     } else {
       setIsEditing(false);
@@ -85,9 +85,9 @@ const TaskForm = ({ onTaskCreated, editingTask, onEditComplete }) => {
     setLoading(true);
 
     try {
-      const taskData = {
+const taskData = {
         ...formData,
-        dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null
+        due_date_c: formData.due_date_c ? new Date(formData.due_date_c).toISOString() : null
       };
 
       if (isEditing) {
@@ -189,9 +189,9 @@ const TaskForm = ({ onTaskCreated, editingTask, onEditComplete }) => {
             placeholder="Select category"
             required
           >
-            {categories.map(category => (
-              <option key={category.Id} value={category.name}>
-                {category.name}
+{categories.map(category => (
+              <option key={category.Id} value={category.Id}>
+                {category.name_c || category.Name}
               </option>
             ))}
           </Select>

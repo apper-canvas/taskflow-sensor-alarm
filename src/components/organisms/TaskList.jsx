@@ -50,55 +50,58 @@ const TaskList = ({ refreshTrigger, onTaskEdit }) => {
     }
   };
 
-  const applyFilters = () => {
+const applyFilters = () => {
     let filtered = [...tasks];
 
     // Apply search filter
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(task =>
-        task.title.toLowerCase().includes(query) ||
-        task.description.toLowerCase().includes(query)
+        (task.title_c && task.title_c.toLowerCase().includes(query)) ||
+        (task.description_c && task.description_c.toLowerCase().includes(query))
       );
     }
 
     // Apply status filter
     if (filters.status !== "all") {
       const completed = filters.status === "completed";
-      filtered = filtered.filter(task => task.completed === completed);
+      filtered = filtered.filter(task => task.completed_c === completed);
     }
 
     // Apply priority filter
     if (filters.priority !== "all") {
-      filtered = filtered.filter(task => task.priority === filters.priority);
+      filtered = filtered.filter(task => task.priority_c === filters.priority);
     }
 
     // Apply category filter
     if (filters.category !== "all") {
-      filtered = filtered.filter(task => task.category === filters.category);
+      filtered = filtered.filter(task => 
+        task.category_c?.Name === filters.category || 
+        task.category_c === filters.category
+      );
     }
 
     // Sort by priority and due date
     filtered.sort((a, b) => {
       // Completed tasks go to bottom
-      if (a.completed !== b.completed) {
-        return a.completed ? 1 : -1;
+      if (a.completed_c !== b.completed_c) {
+        return a.completed_c ? 1 : -1;
       }
 
       // Sort by priority
       const priorityOrder = { "High": 3, "Medium": 2, "Low": 1 };
-      const priorityDiff = (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+      const priorityDiff = (priorityOrder[b.priority_c] || 0) - (priorityOrder[a.priority_c] || 0);
       if (priorityDiff !== 0) return priorityDiff;
 
       // Sort by due date
-      if (a.dueDate && b.dueDate) {
-        return new Date(a.dueDate) - new Date(b.dueDate);
+      if (a.due_date_c && b.due_date_c) {
+        return new Date(a.due_date_c) - new Date(b.due_date_c);
       }
-      if (a.dueDate && !b.dueDate) return -1;
-      if (!a.dueDate && b.dueDate) return 1;
+      if (a.due_date_c && !b.due_date_c) return -1;
+      if (!a.due_date_c && b.due_date_c) return 1;
 
       // Sort by creation date
-      return new Date(b.createdAt) - new Date(a.createdAt);
+      return new Date(b.created_at_c || b.CreatedOn) - new Date(a.created_at_c || a.CreatedOn);
     });
 
     setFilteredTasks(filtered);
@@ -117,8 +120,8 @@ const TaskList = ({ refreshTrigger, onTaskEdit }) => {
   };
 
   const getTaskStats = () => {
-    const total = tasks.length;
-    const completed = tasks.filter(task => task.completed).length;
+const total = tasks.length;
+    const completed = tasks.filter(task => task.completed_c).length;
     const pending = total - completed;
     const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
 
